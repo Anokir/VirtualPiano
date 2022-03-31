@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Home Page
+    </title>
+    <link rel="stylesheet" href="piano.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="wrapper">
+                <div class="nameInput">Time Signature</div>
+                <select id="beatSelector" class="metronomeControls" required>
+                    <option id="2/4">2/4 Beat</option>
+                    <option id="3/4">3/4 Beat</option>
+                    <option id="4/4">4/4 Beat</option>
+                </select>
+            </div>
+
+            <div class="wrapper">
+                <div class="nameInput">Beats Per Minute</div>
+                <input id="bpmInput" class="metronomeControls" type="number" value="120">
+            </div>
+
+            <div type="button" class="button" id="metronome">
+                <span id="metronomeText" class="buttonText">Start Metronome</span>
+                <span class="icon">
+                    <img src="../images/Metronome.png">
+                </span>
+            </div>
+
+            <button id="playback" class="recordControls">PLAYBACK</button>
+            <button id="recordsArray" class="recordControls">recordedNotes</button>
+
+            <div type="button" class="button" id="recording">
+                <span id="recordText" class="buttonText">Start Recording</span>
+                <span class="icon">
+                    <img src="../images/Record.png">
+                </span>
+            </div>
+
+            <div id="recNotesShown">
+            </div>
+        </div>
+
+        <div class="listContainer">
+            Recorded Notes
+            <ul id="list">
+                <li>kiba eta 1</li>
+                <li>kiba eta 2</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="keyContainer">
+        <div class="whiteKey" id="key1"></div>
+        <div class="blackKey" id="key2"></div>
+        <div class="whiteKey" id="key3"></div>
+        <div class="blackKey" id="key4"></div>
+        <div class="whiteKey" id="key5"></div>
+        <div class="blackKey" id="key6"></div>
+        <div class="whiteKey" id="key7"></div>
+        <div class="whiteKey" id="key8"></div>
+        <div class="blackKey" id="key9"></div>
+        <div class="whiteKey" id="key10"></div>
+        <div class="blackKey" id="key11"></div>
+        <div class="whiteKey" id="key12"></div>
+        <div class="whiteKey" id="key13"></div>
+        <div class="blackKey" id="key14"></div>
+        <div class="whiteKey" id="key15"></div>
+        <div class="blackKey" id="key16"></div>
+        <div class="whiteKey" id="key17"></div>
+        <div class="blackKey" id="key18"></div>
+        <div class="whiteKey" id="key19"></div>
+        <div class="whiteKey" id="key20"></div>
+        <div class="blackKey" id="key21"></div>
+        <div class="whiteKey" id="key22"></div>
+        <div class="blackKey" id="key23"></div>
+        <div class="whiteKey" id="key24"></div>
+    </div>
+
+    <script src="piano.js"></script>
+
+</body>
+
+</html>
