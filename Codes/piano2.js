@@ -1,3 +1,25 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseApp = initializeApp({
+  apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
+  authDomain: "piano-d6eaf.firebaseapp.com",
+  projectId: "piano-d6eaf",
+  storageBucket: "piano-d6eaf.appspot.com",
+  messagingSenderId: "708051164888",
+  appId: "1:708051164888:web:77f7298800f639e4dd41ad",
+  measurementId: "G-YQT4QB8BLD"
+})
+
+const auth = getAuth();
+// signOut(auth).then(() => {
+//   console.log(auth);
+// }).catch((error) => {
+//   // An error happened.
+// });
+
 const baseAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-1.mp3`)
 const metronomeAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-2.mp3`)
 const bpmInput = document.getElementById("bpmInput");
@@ -22,7 +44,8 @@ const padNumber = (num) => {
   else { return num; }
 }
 
-let records = []
+let recordList = [];
+let records = [];
 
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
@@ -156,61 +179,86 @@ let isRecording = false;
 
 //recording
 recordingButton.addEventListener("click", () => {
-  if (!isRecording) {
-    records = [];
-    startTimeRecord = Date.now();
-    isRecording = true;
-    recordText.innerHTML = "Stop Recording";
-    recordingButton.className = "button buttonStop"
+  if (auth.currentUser === null) {
+    alert("You need to be logged in to access this feature!")
   }
   else {
-    stopTimeRecord = Date.now();
-    console.log(stopTimeRecord - startTimeRecord)
-    isRecording = false;
-    recordText.innerHTML = "Start Recording"
-    recordingButton.className = "button"
-
-    if (records.length === 0) {
-      alert("Empty Recording!")
+    if (!isRecording) {
+      records = [];
+      startTimeRecord = Date.now();
+      isRecording = true;
+      recordText.innerHTML = "Stop Recording";
+      recordingButton.className = "button buttonStop"
     }
     else {
-      const listItem = document.createElement("li")
-      listItem.innerHTML = new Date()
-      recordingList.appendChild(listItem)
+      stopTimeRecord = Date.now();
+      console.log(stopTimeRecord - startTimeRecord)
+      isRecording = false;
+      recordText.innerHTML = "Start Recording"
+      recordingButton.className = "button"
+
+      if (records.length === 0) {
+        alert("Empty Recording!")
+      }
+      else {
+        const notes = JSON.parse(JSON.stringify(records));
+        const name = `Record ${recordList.length + 1}`;
+        const record = {
+          createdAt: new Date(),
+          name: name,
+          notes: notes,
+        }
+        recordList.push(record);
+        // console.log(record);
+
+        const listItem = document.createElement("li")
+        listItem.className = "recordItem";
+        listItem.innerHTML = `${name},  ${record.createdAt.toDateString('dd-MM-yyyy')}`;
+        listItem.addEventListener("click", () => {
+          for (let z = 0; z < record.notes.length; z++) {
+            const recObj = record.notes[z];
+            setTimeout(() => {
+              if (recObj.isDown) {
+                soundObj[recObj.key].play();
+              }
+              else {
+                soundObj[recObj.key].pause();
+                soundObj[recObj.key].currentTime = 0;
+              }
+            }, recObj.time)
+          }
+        })
+        recordingList.appendChild(listItem)
+      }
     }
   }
 })
 
+//${record.createdAt.toTimeString('hh-mm-ss')
+
 //recordedNotes
-recordedNotes.addEventListener("click", () => {
-  let outputString = ""
-  for (let j = 0; j < records.length; j++) {
-    const recObj = records[j];
-    outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
-  }
-  recNotesShown.innerHTML = outputString;
-})
+// recordedNotes.addEventListener("click", () => {
+//   let outputString = ""
+//   for (let j = 0; j < records.length; j++) {
+//     const recObj = records[j];
+//     outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
+//   }
+//   recNotesShown.innerHTML = outputString;
+// })
 
 //playbackFunctionality
-playbackBttn.addEventListener("click", () => {
-  for (let z = 0; z < records.length; z++) {
-    const recObj = records[z];
-    setTimeout(() => {
-      if (recObj.isDown) {
-        soundObj[recObj.key].play();
-      }
-      else {
-        soundObj[recObj.key].pause();
-        soundObj[recObj.key].currentTime = 0;
-      }
-    }, recObj.time)
-  }
-})
+// playbackBttn.addEventListener("click", () => {
+//   for (let z = 0; z < records.length; z++) {
+//     const recObj = records[z];
+//     setTimeout(() => {
+//       if (recObj.isDown) {
+//         soundObj[recObj.key].play();
+//       }
+//       else {
+//         soundObj[recObj.key].pause();
+//         soundObj[recObj.key].currentTime = 0;
+//       }
+//     }, recObj.time)
+//   }
+// })
 
-
-
-firebase.auth().onAuthStateCHanged((user) => {
-  if(!user){
-    location.replace("loginPage.html")
-  }
-})
