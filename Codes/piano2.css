@@ -20,24 +20,26 @@ img {
 
 .box1 {
   background-color: rgba(255, 255, 255, 0.25);
-  margin: 20px 20px 20px 100px;
+  margin: 20px 5px 20px 110px;
   width: 24%;
-  border-radius: 4px;
+  border-radius: 20px 4px 4px 20px;
   padding-bottom: 10px;
 }
 
 .box2 {
   background-color: rgba(255, 255, 255, 0.25);
-  margin: 20px 40px 20px 20px;
-  width: 58%;
-  border-radius: 4px;
+  margin: 20px 40px 20px 5px;
+  width: 54%;
+  border-radius: 4px 20px 20px 4px;
   padding: 20px;
 }
 
 .metronomeContainer {
   /* background: linear-gradient(135deg, rgba(66, 43, 196, 0.215) 50%, rgba(226, 164, 200, 0.878) 30%, rgba(29, 118, 202, 0.415) 100%);  margin: 10px 30px 10px 30px; */
   padding: 20px;
-  /* border-radius: 4px; */
+  background-color: rgba(255, 255, 255, 0.223);
+  margin: 20px;
+  border-radius: 4px;
 }
 
 .inputFlexContainer {
@@ -64,6 +66,8 @@ img {
   color: #fff;
   text-align: center;
   border-radius: 5px;
+  border: none;
+  outline: none;
 }
 
 .button {
@@ -135,7 +139,7 @@ img {
   display: flex;
   width: 840px;
   border: 10px solid #464866;
-  margin: 40px 0 0 340px
+  margin: 20px 0 0 340px
 }
 
 .whiteKey {
@@ -163,8 +167,4 @@ img {
 .blackKey:active {
   background-color: #222;
   transform: scale(0.99);
-}
-
-#recordingButton{
-  
 }
