@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Piano</title>
+<link rel="stylesheet" href="piano2.css">
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="flexDiv">
+    <div class="box1">
+      <div class="metronomeContainer">
+
+        <div class="inputFlexContainer">
+          <div class="textOutput">Time Signature</div>
+          <select id="timeSignature" class="metronomeControls" required>
+            <option id="2/4">2/4 Beat</option>
+            <option id="3/4">3/4 Beat</option>
+            <option id="4/4">4/4 Beat</option>
+          </select>
+        </div>
+
+        <div class="inputFlexContainer">
+          <div class="textOutput">Beats Per Minute</div>
+          <input id="bpmInput" class="metronomeControls" type="number" value="120">
+        </div>
+
+        <div type="button" class="button" id="metronomeButton">
+          <span id="metronomeText" class="buttonText">Start Metronome</span>
+          <span class="icon">
+            <img src="../images/Metronome.png">
+          </span>
+
+        </div>
+      </div>
+
+      <div type="button" id="keyName" class="button2">
+        Show Hide Keys
+      </div>
+
+      <div type="button" id="noteName" class="button2">
+        Show Hide Notes
+      </div>
+
+      <div id="playingNotes" class="button2">
+        to show notes being played
+      </div>
+    </div>
+
+    <div class="box2">
+      <div class="listContainer">
+        Recordings
+        <ul id="list">
+        </ul>
+      </div>
+      <div type="button" class="button" id="recordingButton">
+        <span id="recordText" class="buttonText">Start Recording</span>
+        <span class="icon">
+          <img src="../images/Record.png">
+        </span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="box3">
+    <div class="keyContainer">
+      <div class="whiteKey" id="key1"></div>
+      <div class="blackKey" id="key2"></div>
+      <div class="whiteKey" id="key3"></div>
+      <div class="blackKey" id="key4"></div>
+      <div class="whiteKey" id="key5"></div>
+      <div class="blackKey" id="key6"></div>
+      <div class="whiteKey" id="key7"></div>
+      <div class="whiteKey" id="key8"></div>
+      <div class="blackKey" id="key9"></div>
+      <div class="whiteKey" id="key10"></div>
+      <div class="blackKey" id="key11"></div>
+      <div class="whiteKey" id="key12"></div>
+      <div class="whiteKey" id="key13"></div>
+      <div class="blackKey" id="key14"></div>
+      <div class="whiteKey" id="key15"></div>
+      <div class="blackKey" id="key16"></div>
+      <div class="whiteKey" id="key17"></div>
+      <div class="blackKey" id="key18"></div>
+      <div class="whiteKey" id="key19"></div>
+      <div class="whiteKey" id="key20"></div>
+      <div class="blackKey" id="key21"></div>
+      <div class="whiteKey" id="key22"></div>
+      <div class="blackKey" id="key23"></div>
+      <div class="whiteKey" id="key24"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+    // import { initializeApp } from "firebase/app";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
+      authDomain: "piano-d6eaf.firebaseapp.com",
+      projectId: "piano-d6eaf",
+      storageBucket: "piano-d6eaf.appspot.com",
+      messagingSenderId: "708051164888",
+      appId: "1:708051164888:web:77f7298800f639e4dd41ad",
+      measurementId: "G-YQT4QB8BLD"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+  </script>
+
+  <script src="piano2.js"></script>
+
+</body>
+
+</html>

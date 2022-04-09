@@ -1,13 +1,13 @@
 const baseAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-1.mp3`)
 const metronomeAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-2.mp3`)
 const bpmInput = document.getElementById("bpmInput");
-const metronomeButton = document.getElementById("metronome");
+const metronomeButton = document.getElementById("metronomeButton");
 const metronomeText = document.getElementById("metronomeText");
 const twoByFour = document.getElementById("2/4");
 const threeByFourBeat = document.getElementById("3/4");
 const fourByFour = document.getElementById("4/4");
-const beatSelector = document.getElementById("beatSelector");
-const recordingButton = document.getElementById("recording")
+const timeSignature = document.getElementById("timeSignature");
+const recordingButton = document.getElementById("recordingButton")
 const recordedNotes = document.getElementById("recordsArray");
 const playbackBttn = document.getElementById("playback");
 const recNotesShown = document.getElementById("recNotesShown");
@@ -100,7 +100,7 @@ let alreadyPlaying = false;
 metronomeButton.addEventListener("click", (event) => {
   if (!alreadyPlaying) {
     let bpmGenerator = 60000 / (bpmInput.value);
-    if (beatSelector.value === "2/4 Beat") {
+    if (timeSignature.value === "2/4 Beat") {
       intervalId = setInterval(() => {
         if (j % 2 === 0) {
           baseAudio.currentTime = 0;
@@ -113,7 +113,7 @@ metronomeButton.addEventListener("click", (event) => {
         j = j + 1;
       }, bpmGenerator)
     }
-    else if (beatSelector.value === "3/4 Beat") {
+    else if (timeSignature.value === "3/4 Beat") {
       intervalId = setInterval(() => {
         if (j % 3 === 0) {
           baseAudio.currentTime = 0;
@@ -204,5 +204,13 @@ playbackBttn.addEventListener("click", () => {
         soundObj[recObj.key].currentTime = 0;
       }
     }, recObj.time)
+  }
+})
+
+
+
+firebase.auth().onAuthStateCHanged((user) => {
+  if(!user){
+    location.replace("loginPage.html")
   }
 })

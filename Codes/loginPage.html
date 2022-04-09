@@ -12,29 +12,79 @@
 
 <body>
 
-  <div class="mainContainer">
+  <!-- <div class="mainContainer"> -->
 
-    <div class="heading">Login Page</div>
-
-    <hr>
+  <div class="textFieldContainer">
+    <div class="heading">
+      <img src="../images/circle-user-solid.svg"></div>
 
     <div class="inputs">
       <span class="img">
         <img src="../images/username.png">
       </span>
-      <input type="email" class="inputText" placeholder="Email ID"></input>
+      <input id="email" type="email" class="inputText" placeholder="Email ID"></input>
     </div>
 
     <div class="inputs">
       <span class="img">
         <img src="../images/password.png">
       </span>
-      <input class="inputText" type="text" placeholder="Password"></input>
+      <input id="password" class="inputText" type="password" placeholder="Password"></input>
     </div>
-
-    <div class="submit" type="button"> Submit</div>
-
+    <div id="createAccountText" class="createAccountText">Create new account</div>
   </div>
+  
+  <div id="signInBttn" class="submit" type="button"> Sign In</div>
+
+  <div id="signUpBttn" class="submit" type="button">Sign Up</div>
+
+
+  <!-- <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
+      authDomain: "piano-d6eaf.firebaseapp.com",
+      projectId: "piano-d6eaf",
+      storageBucket: "piano-d6eaf.appspot.com",
+      messagingSenderId: "708051164888",
+      appId: "1:708051164888:web:77f7298800f639e4dd41ad",
+      measurementId: "G-YQT4QB8BLD"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+  </script> -->
+<!-- //     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+// import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+// // Your web app's Firebase configuration
+// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseApp = initializeApp({
+//   apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
+//   authDomain: "piano-d6eaf.firebaseapp.com",
+//   projectId: "piano-d6eaf",
+//   storageBucket: "piano-d6eaf.appspot.com",
+//   messagingSenderId: "708051164888",
+//   appId: "1:708051164888:web:77f7298800f639e4dd41ad",
+//   measurementId: "G-YQT4QB8BLD"
+// })
+
+// // Initialize Firebase
+// const analytics = getAnalytics(firebaseApp);
+// const auth = getAuth(firebaseApp); -->
+
+
+  <script type="module" src="loginPage.js"></script>
+
 
 </body>
 

@@ -1,0 +1,170 @@
+body {
+  background-image: url("../images/Background.jpg");
+  font-family: 'Ubuntu', sans-serif;
+  margin: auto;
+  font-size: 18px;
+  font-weight: 500;
+  color: #01264e;
+}
+
+img {
+  height: 40px;
+  width: 40px;
+}
+
+.flexDiv {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.box1 {
+  background-color: rgba(255, 255, 255, 0.25);
+  margin: 20px 20px 20px 100px;
+  width: 24%;
+  border-radius: 4px;
+  padding-bottom: 10px;
+}
+
+.box2 {
+  background-color: rgba(255, 255, 255, 0.25);
+  margin: 20px 40px 20px 20px;
+  width: 58%;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.metronomeContainer {
+  /* background: linear-gradient(135deg, rgba(66, 43, 196, 0.215) 50%, rgba(226, 164, 200, 0.878) 30%, rgba(29, 118, 202, 0.415) 100%);  margin: 10px 30px 10px 30px; */
+  padding: 20px;
+  /* border-radius: 4px; */
+}
+
+.inputFlexContainer {
+  margin-left: 10px;
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.textOutput {
+  padding-right: 8px;
+  height: 32px;
+  width: 84px;
+  word-wrap: break-word;
+  line-height: 20px;
+  text-align: right;
+}
+
+.metronomeControls {
+  background-color: #464866;
+  border: none;
+  height: 40px;
+  width: 120px;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.button {
+  position: relative;
+  display: flex;
+  margin: auto;
+  height: 50px;
+  width: 180px;
+  background-color: #29648a;
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: 20px;
+  cursor: pointer;
+  /* transition: background-color 200ms, transform 200ms; */
+}
+
+.buttonText,
+.icon {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  height: 100%;
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  font-size: 1.5em;
+  overflow: hidden;
+}
+
+.buttonText {
+  padding-left: 64px;
+  text-align: left;
+  line-height: 18px;
+}
+
+.button:hover {
+  background-color: #185379;
+}
+
+.button:active {
+  transform: scale(0.98);
+  background-color: #074268;
+}
+
+.buttonStop {
+  background-color: #b4535c;
+}
+
+.buttonStop :hover {
+  background-color: #a3424b;
+}
+
+.button2{
+  margin: auto;
+  width: 180px;
+  background-color: #226693;
+  border-radius: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 10px 4px 10px 4px;
+}
+
+.keyContainer {
+  display: flex;
+  width: 840px;
+  border: 10px solid #464866;
+  margin: 40px 0 0 340px
+}
+
+.whiteKey {
+  position: relative;
+  height: 170px;
+  width: 60px;
+  border: 1px solid black;
+  background-color: #eee;
+}
+
+.whiteKey:active {
+  background-color: #ccc;
+  transform: scale(0.99);
+}
+
+.blackKey {
+  position: relative;
+  height: 120px;
+  width: 40px;
+  background-color: #111;
+  margin: 0px -20px;
+  z-index: 2;
+}
+
+.blackKey:active {
+  background-color: #222;
+  transform: scale(0.99);
+}
+
+#recordingButton{
+  
+}
