@@ -27,7 +27,7 @@ const recNotesShown = document.getElementById("recNotesShown");
 const recordingList = document.getElementById("list")
 const showNotes = document.getElementById("noteName");
 const showKeyboardKeys = document.getElementById("keyName");
-const logoutBttn = document.getElementById("logoutBttn");
+const signOutText = document.getElementById("signOutText");
 const signInText = document.getElementById("signInText");
 const greetingText = document.getElementById("greetingText");
 const playingNotes = document.getElementById("playingNotes");
@@ -302,13 +302,10 @@ showKeyboardKeys.addEventListener("click", () => {
   }
 })
 
-logoutBttn.addEventListener("click", () => {
+signOutText.addEventListener("click", () => {
   if (auth.currentUser === null) {
-
   } else {
     signOut(auth).then(() => {
-      signInText.style.display = "block";
-      logoutBttn.style.display = "none";
     }).catch((error) => {
       alert(error)
     });
@@ -321,12 +318,12 @@ signInText.addEventListener("click", () => {
 
 auth.onAuthStateChanged(function (user) {
   if (user) {
-    greetingText.innerHTML = `Signed in as ${user.email}`;
+    greetingText.innerHTML = `Signed in as ${user.email} • `;
     signInText.style.display = "none";
   } else {
-    greetingText.innerHTML = "Joined as guest";
+    greetingText.innerHTML = "Joined as guest • ";
     signInText.style.display = "block";
-    logoutBttn.style.display = "none";
+    signOutText.style.display = "none";
   }
 });
 
