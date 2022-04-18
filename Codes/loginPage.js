@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -19,6 +19,7 @@ const passwordInput = document.getElementById("password");
 const signInBttn = document.getElementById("signInBttn");
 const signUpBttn = document.getElementById("signUpBttn");
 const createAccountText = document.getElementById("createAccountText");
+const guestLoginText = document.getElementById("guestLoginText");
 
 let isSignIn = true;
 
@@ -26,6 +27,7 @@ const getTextInput = (input) => {
   return input.value
 }
 
+// let bttnDisabled = false;
 signInBttn.addEventListener("click", () => {
   signInWithEmailAndPassword(auth, getTextInput(emailInput), getTextInput(passwordInput))
     .then(() => {
@@ -34,25 +36,36 @@ signInBttn.addEventListener("click", () => {
     .catch((error) => {
       alert(error.message);
     });
-  signInBttn.style.pointerEvents = 'none';
+  // signInBttn.disabled = true;
+  // bttnDisabled = true;
+  // signInBttn.delay(5000).disabled = false;
+  // setTimeout(()=>{
+  //   if(bttnDisabled){
+  //     signInBttn.disabled = false;
+  //     bttnDisabled = false;
+  //   }
+  // },5000)
+  console.log("hijhkj");
+  signInBttn.disabled = true;
+  setTimeout(() => {
+    signInBttn.disabled = false;
+    console.log('Button Activated')
+  }, 5000)
+  // signInBttn.style.pointerEvents = 'none';
 })
-
-
 
 signUpBttn.addEventListener("click", () => {
   createUserWithEmailAndPassword(auth, getTextInput(emailInput), getTextInput(passwordInput))
     .then((userCredential) => {
-      const user = userCredential.user;
+      window.location.href = "loginPage.html"
     })
     .catch((error) => {
       alert(error.message);
-      // ..
     });
-  signUpBttn.style.pointerEvents = 'none';
+  // signUpBttn.style.pointerEvents = 'none';
 })
 
 signUpBttn.style.display = 'none';
-
 createAccountText.addEventListener("click", () => {
   if (isSignIn) {
     signUpBttn.style.display = 'block';
@@ -66,4 +79,9 @@ createAccountText.addEventListener("click", () => {
     createAccountText.innerHTML = "Create new account";
     isSignIn = true;
   }
+})
+
+guestLoginText.addEventListener("click", ()=>{
+  alert("You are now joining as a guest. Some of the features maynot be applicable!");
+  window.location.href = "piano2.html";
 })

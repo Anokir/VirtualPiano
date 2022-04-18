@@ -17,7 +17,7 @@ body {
   width: 500px;
   justify-content: space-evenly;
   border-radius: 20px;
-  padding-bottom: 60px;
+  padding-bottom: 40px;
 }
 .heading{
   width:100%;
@@ -28,7 +28,6 @@ body {
   width: 160px;
   height: 160px;
   margin-top: -80px;
-  /* background-color: #7c92b5; */
   background-color: #ddd; 
   border-radius: 100%;
 }
@@ -87,7 +86,7 @@ body {
 }
 
 .createAccountText {
-  margin-top: 60px;
+  margin-top: 50px;
   text-align: center;
   font-size: 20px;
 }
@@ -95,4 +94,8 @@ body {
 .createAccountText:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+#guestLoginText {
+  margin-top: 8px;
 }

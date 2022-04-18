@@ -14,29 +14,26 @@ const firebaseApp = initializeApp({
 })
 
 const auth = getAuth();
-// signOut(auth).then(() => {
-//   console.log(auth);
-// }).catch((error) => {
-//   // An error happened.
-// });
-
 const baseAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-1.mp3`)
 const metronomeAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-2.mp3`)
 const bpmInput = document.getElementById("bpmInput");
 const metronomeButton = document.getElementById("metronomeButton");
 const metronomeText = document.getElementById("metronomeText");
-const twoByFour = document.getElementById("2/4");
-const threeByFourBeat = document.getElementById("3/4");
-const fourByFour = document.getElementById("4/4");
 const timeSignature = document.getElementById("timeSignature");
 const recordingButton = document.getElementById("recordingButton")
 const recordedNotes = document.getElementById("recordsArray");
 const playbackBttn = document.getElementById("playback");
 const recNotesShown = document.getElementById("recNotesShown");
 const recordingList = document.getElementById("list")
+const showNotes = document.getElementById("noteName");
+const showKeyboardKeys = document.getElementById("keyName");
+const logoutBttn = document.getElementById("logoutBttn");
+const signInText = document.getElementById("signInText");
+const greetingText = document.getElementById("greetingText");
+const playingNotes = document.getElementById("playingNotes");
 
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
-const keyNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
+const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
 const soundObj = {}
 
 const padNumber = (num) => {
@@ -46,6 +43,8 @@ const padNumber = (num) => {
 
 let recordList = [];
 let records = [];
+
+
 
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
@@ -59,11 +58,12 @@ for (let i = 0; i < 24; i++) {
       const recObj = {
         isDown: true,
         key: `key${i + 1}`,
-        note: keyNameArray[i],
+        note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      records.push(recObj)
+      records.push(recObj);
     }
+    playingNotes.innerHTML = noteNameArray[i];
   })
   button.addEventListener("mouseup", () => {
     sound.pause()
@@ -72,11 +72,12 @@ for (let i = 0; i < 24; i++) {
       const recObj = {
         isDown: false,
         key: `key${i + 1}`,
-        note: keyNameArray[i],
+        note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      records.push(recObj)
+      records.push(recObj);
     }
+    playingNotes.innerHTML = ` `;
   })
 
   //keyPress events 
@@ -89,11 +90,12 @@ for (let i = 0; i < 24; i++) {
           const recObj = {
             isDown: true,
             key: `key${i + 1}`,
-            note: keyNameArray[i],
+            note: noteNameArray[i],
             time: Date.now() - startTimeRecord
           }
-          records.push(recObj)
+          records.push(recObj);
         }
+        playingNotes.innerHTML = noteNameArray[i];
       }
     }
   })
@@ -106,11 +108,12 @@ for (let i = 0; i < 24; i++) {
         const recObj = {
           isDown: false,
           key: `key${i + 1}`,
-          note: keyNameArray[i],
+          note: noteNameArray[i],
           time: Date.now() - startTimeRecord
         }
-        records.push(recObj)
+        records.push(recObj);
       }
+      playingNotes.innerHTML = ` `;
     }
   })
 }
@@ -227,6 +230,12 @@ recordingButton.addEventListener("click", () => {
               }
             }, recObj.time)
           }
+          // let outputString = ""
+          // for (let j = 0; j < records.length; j++) {
+          //   const recObj = records[j];
+          //   outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
+          // }
+          // playingNotes.innerHTML = outputString;
         })
         recordingList.appendChild(listItem)
       }
@@ -236,14 +245,14 @@ recordingButton.addEventListener("click", () => {
 
 //${record.createdAt.toTimeString('hh-mm-ss')
 
-//recordedNotes
-// recordedNotes.addEventListener("click", () => {
+
+// playingNotes.addEventListener("click", () => {
 //   let outputString = ""
 //   for (let j = 0; j < records.length; j++) {
 //     const recObj = records[j];
 //     outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
 //   }
-//   recNotesShown.innerHTML = outputString;
+//   playingNotes.innerHTML = outputString;
 // })
 
 //playbackFunctionality
@@ -261,4 +270,64 @@ recordingButton.addEventListener("click", () => {
 //     }, recObj.time)
 //   }
 // })
+
+
+let notesShown = false;
+showNotes.addEventListener("click", () => {
+  if (!notesShown) {
+    for (let j = 0; j < noteNameArray.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = noteNameArray[j];
+    }
+    notesShown = true;
+  } else {
+    for (let j = 0; j < noteNameArray.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = "";
+      notesShown = false;
+    }
+  }
+})
+
+let controlsShown = false;
+showKeyboardKeys.addEventListener("click", () => {
+  if (!controlsShown) {
+    for (let j = 0; j < arrayforKeys.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = arrayforKeys[j];
+    }
+    controlsShown = true;
+  } else {
+    for (let j = 0; j < arrayforKeys.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = "";
+      controlsShown = false;
+    }
+  }
+})
+
+logoutBttn.addEventListener("click", () => {
+  if (auth.currentUser === null) {
+
+  } else {
+    signOut(auth).then(() => {
+      signInText.style.display = "block";
+      logoutBttn.style.display = "none";
+    }).catch((error) => {
+      alert(error)
+    });
+  }
+})
+
+signInText.addEventListener("click", () => {
+  window.location.href = "loginPage.html"
+})
+
+auth.onAuthStateChanged(function (user) {
+  if (user) {
+    greetingText.innerHTML = `Signed in as ${user.email}`;
+    signInText.style.display = "none";
+  } else {
+    greetingText.innerHTML = "Joined as guest";
+    signInText.style.display = "block";
+    logoutBttn.style.display = "none";
+  }
+});
+
 
