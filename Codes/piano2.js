@@ -230,47 +230,12 @@ recordingButton.addEventListener("click", () => {
               }
             }, recObj.time)
           }
-          // let outputString = ""
-          // for (let j = 0; j < records.length; j++) {
-          //   const recObj = records[j];
-          //   outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
-          // }
-          // playingNotes.innerHTML = outputString;
         })
         recordingList.appendChild(listItem)
       }
     }
   }
 })
-
-//${record.createdAt.toTimeString('hh-mm-ss')
-
-
-// playingNotes.addEventListener("click", () => {
-//   let outputString = ""
-//   for (let j = 0; j < records.length; j++) {
-//     const recObj = records[j];
-//     outputString += `${recObj.isDown === true ? "\u2193" : "\u2191"}${recObj.note} `;
-//   }
-//   playingNotes.innerHTML = outputString;
-// })
-
-//playbackFunctionality
-// playbackBttn.addEventListener("click", () => {
-//   for (let z = 0; z < records.length; z++) {
-//     const recObj = records[z];
-//     setTimeout(() => {
-//       if (recObj.isDown) {
-//         soundObj[recObj.key].play();
-//       }
-//       else {
-//         soundObj[recObj.key].pause();
-//         soundObj[recObj.key].currentTime = 0;
-//       }
-//     }, recObj.time)
-//   }
-// })
-
 
 let notesShown = false;
 showNotes.addEventListener("click", () => {
