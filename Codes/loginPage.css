@@ -3,6 +3,8 @@ body {
   font-family: 'Ubuntu', sans-serif;
   font-size: 40px;
   color: #01264e;
+  overflow: auto;
+  background-size: cover;
 }
 
 ::placeholder {
@@ -71,6 +73,7 @@ body {
 }
 
 .submit {
+  cursor: pointer;
   width: 360px;
   margin: auto;
   text-align: center;
