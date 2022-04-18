@@ -27,42 +27,31 @@ const getTextInput = (input) => {
   return input.value
 }
 
-// let bttnDisabled = false;
 signInBttn.addEventListener("click", () => {
+  signInBttn.style.pointerEvents = 'none';
   signInWithEmailAndPassword(auth, getTextInput(emailInput), getTextInput(passwordInput))
     .then(() => {
       window.location.href = "piano2.html";
+      signInBttn.style.pointerEvents = 'auto';
     })
     .catch((error) => {
       alert(error.message);
+      signInBttn.style.pointerEvents = 'auto';
     });
-  // signInBttn.disabled = true;
-  // bttnDisabled = true;
-  // signInBttn.delay(5000).disabled = false;
-  // setTimeout(()=>{
-  //   if(bttnDisabled){
-  //     signInBttn.disabled = false;
-  //     bttnDisabled = false;
-  //   }
-  // },5000)
-  console.log("hijhkj");
-  signInBttn.disabled = true;
-  setTimeout(() => {
-    signInBttn.disabled = false;
-    console.log('Button Activated')
-  }, 5000)
-  // signInBttn.style.pointerEvents = 'none';
 })
 
 signUpBttn.addEventListener("click", () => {
+  signUpBttn.style.pointerEvents = 'none';
   createUserWithEmailAndPassword(auth, getTextInput(emailInput), getTextInput(passwordInput))
     .then((userCredential) => {
-      window.location.href = "loginPage.html"
+      window.location.href = "loginPage.html";
+      signUpBttn.style.pointerEvents = 'auto';
+      alert(`User with email ${getTextInput(emailInput)} has been created successfully! Please login using the new credentials.`)
     })
     .catch((error) => {
       alert(error.message);
+      signUpBttn.style.pointerEvents = 'auto';
     });
-  // signUpBttn.style.pointerEvents = 'none';
 })
 
 signUpBttn.style.display = 'none';

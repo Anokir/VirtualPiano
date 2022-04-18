@@ -184,6 +184,8 @@ let isRecording = false;
 recordingButton.addEventListener("click", () => {
   if (auth.currentUser === null) {
     alert("You need to be logged in to access this feature!")
+  }else if (recordList.length > 6){
+    alert("Does not support more recordings! Please delete one or more exisiting records.");
   }
   else {
     if (!isRecording) {
@@ -213,11 +215,19 @@ recordingButton.addEventListener("click", () => {
         }
         recordList.push(record);
         // console.log(record);
-
         const listItem = document.createElement("li")
         listItem.className = "recordItem";
-        listItem.innerHTML = `${name},  ${record.createdAt.toDateString('dd-MM-yyyy')}`;
-        listItem.addEventListener("click", () => {
+
+        const itemName = document.createElement("span")
+        itemName.innerHTML = `${name},  ${record.createdAt.toDateString('dd-MM-yyyy')} &nbsp&nbsp|`;
+        listItem.appendChild(itemName)
+
+        const itemPlayBttn = document.createElement("span")
+        itemPlayBttn.innerHTML = "Play";
+        itemPlayBttn.className = "recordItemPlayBttn";
+        listItem.appendChild(itemPlayBttn)
+
+        itemPlayBttn.addEventListener("click", () => {
           for (let z = 0; z < record.notes.length; z++) {
             const recObj = record.notes[z];
             setTimeout(() => {
@@ -231,6 +241,25 @@ recordingButton.addEventListener("click", () => {
             }, recObj.time)
           }
         })
+
+        const itemDivider = document.createElement("span")
+        itemDivider.innerHTML = `&nbsp&nbsp|`;
+        listItem.appendChild(itemDivider)
+
+        const itemDeleteBttn = document.createElement("span")
+        itemDeleteBttn.innerHTML = "Delete";
+        itemDeleteBttn.className = "recordItemPlayBttn";
+        listItem.appendChild(itemDeleteBttn)
+
+        itemDeleteBttn.addEventListener("click", ()=>{
+          for(let i=0; i < recordList.length; i++){
+            if (name === recordList[i].name){
+              recordList.splice(i,1);
+            }
+          }
+          recordingList.removeChild(listItem)
+        })
+
         recordingList.appendChild(listItem)
       }
     }

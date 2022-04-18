@@ -211,11 +211,15 @@ img {
 
 .recordItem{
   margin-bottom:10px;
-  cursor: pointer;
-  width:fit-content;
+    width:fit-content;
 }
 
-.recordItem:hover{
+.recordItemPlayBttn{
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.recordItemPlayBttn:hover{
   text-decoration: underline;
 }
 
