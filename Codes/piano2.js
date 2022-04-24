@@ -1,8 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
   authDomain: "piano-d6eaf.firebaseapp.com",
@@ -14,6 +13,8 @@ const firebaseApp = initializeApp({
 })
 
 const auth = getAuth();
+const firestore = getFirestore();
+let firebaseUser;
 const baseAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-1.mp3`)
 const metronomeAudio = new Audio(`../sounds/metronome/Metronome-Click-Tick-2.mp3`)
 const bpmInput = document.getElementById("bpmInput");
@@ -31,6 +32,7 @@ const signOutText = document.getElementById("signOutText");
 const signInText = document.getElementById("signInText");
 const greetingText = document.getElementById("greetingText");
 const playingNotes = document.getElementById("playingNotes");
+const justABttn = document.getElementById("justABttn");
 
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
 const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
@@ -44,7 +46,7 @@ const padNumber = (num) => {
 let recordList = [];
 let records = [];
 
-
+console.log(auth)
 
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
@@ -184,7 +186,7 @@ let isRecording = false;
 recordingButton.addEventListener("click", () => {
   if (auth.currentUser === null) {
     alert("You need to be logged in to access this feature!")
-  }else if (recordList.length > 6){
+  } else if (recordList.length > 6) {
     alert("Does not support more recordings! Please delete one or more exisiting records.");
   }
   else {
@@ -208,59 +210,17 @@ recordingButton.addEventListener("click", () => {
       else {
         const notes = JSON.parse(JSON.stringify(records));
         const name = `Record ${recordList.length + 1}`;
+        const dateNow = Date.now();
         const record = {
-          createdAt: new Date(),
+          createdAt: dateNow,
           name: name,
           notes: notes,
         }
-        recordList.push(record);
-        // console.log(record);
-        const listItem = document.createElement("li")
-        listItem.className = "recordItem";
-
-        const itemName = document.createElement("span")
-        itemName.innerHTML = `${name},  ${record.createdAt.toDateString('dd-MM-yyyy')} &nbsp&nbsp|`;
-        listItem.appendChild(itemName)
-
-        const itemPlayBttn = document.createElement("span")
-        itemPlayBttn.innerHTML = "Play";
-        itemPlayBttn.className = "recordItemPlayBttn";
-        listItem.appendChild(itemPlayBttn)
-
-        itemPlayBttn.addEventListener("click", () => {
-          for (let z = 0; z < record.notes.length; z++) {
-            const recObj = record.notes[z];
-            setTimeout(() => {
-              if (recObj.isDown) {
-                soundObj[recObj.key].play();
-              }
-              else {
-                soundObj[recObj.key].pause();
-                soundObj[recObj.key].currentTime = 0;
-              }
-            }, recObj.time)
-          }
+        const firebaseRecord = {}
+        firebaseRecord[`${dateNow}`] = record;
+        setDoc(firebaseUser, firebaseRecord, { merge: true }).then(() => {
+          fetchRecords();
         })
-
-        const itemDivider = document.createElement("span")
-        itemDivider.innerHTML = `&nbsp&nbsp|`;
-        listItem.appendChild(itemDivider)
-
-        const itemDeleteBttn = document.createElement("span")
-        itemDeleteBttn.innerHTML = "Delete";
-        itemDeleteBttn.className = "recordItemPlayBttn";
-        listItem.appendChild(itemDeleteBttn)
-
-        itemDeleteBttn.addEventListener("click", ()=>{
-          for(let i=0; i < recordList.length; i++){
-            if (name === recordList[i].name){
-              recordList.splice(i,1);
-            }
-          }
-          recordingList.removeChild(listItem)
-        })
-
-        recordingList.appendChild(listItem)
       }
     }
   }
@@ -314,6 +274,9 @@ auth.onAuthStateChanged(function (user) {
   if (user) {
     greetingText.innerHTML = `Signed in as ${user.email} • `;
     signInText.style.display = "none";
+    console.log(`userlogged in with user info ${user}`);
+    firebaseUser = doc(firestore, `users/${user.uid}`);
+    fetchRecords();
   } else {
     greetingText.innerHTML = "Joined as guest • ";
     signInText.style.display = "block";
@@ -322,3 +285,73 @@ auth.onAuthStateChanged(function (user) {
 });
 
 
+
+justABttn.addEventListener("click", () => {
+})
+
+
+const fetchRecords = async () => {
+  const mySnapshot = await getDoc(firebaseUser)
+  if (mySnapshot.exists()) {
+    var child = recordingList.lastElementChild;
+    while (child) {
+      recordingList.removeChild(child);
+      child = recordingList.lastElementChild;
+    }
+    recordList = [];
+    const docData = mySnapshot.data();
+    for (let key in docData) {
+      const record = docData[key]
+      const dateTime = new Date(record.createdAt)
+      recordList.push(record);
+      // console.log(record);
+      const listItem = document.createElement("li")
+      listItem.className = "recordItem";
+
+      const itemName = document.createElement("span")
+      itemName.innerHTML = `${record.name},  ${dateTime.toDateString('dd-MM-yyyy')} &nbsp&nbsp|`;
+      listItem.appendChild(itemName)
+
+      const itemPlayBttn = document.createElement("span")
+      itemPlayBttn.innerHTML = "Play";
+      itemPlayBttn.className = "recordItemPlayBttn";
+      listItem.appendChild(itemPlayBttn)
+
+      itemPlayBttn.addEventListener("click", () => {
+        for (let z = 0; z < record.notes.length; z++) {
+          const recObj = record.notes[z];
+          setTimeout(() => {
+            if (recObj.isDown) {
+              soundObj[recObj.key].play();
+            }
+            else {
+              soundObj[recObj.key].pause();
+              soundObj[recObj.key].currentTime = 0;
+            }
+          }, recObj.time)
+        }
+      })
+
+      const itemDivider = document.createElement("span")
+      itemDivider.innerHTML = `&nbsp&nbsp|`;
+      listItem.appendChild(itemDivider)
+
+      const itemDeleteBttn = document.createElement("span")
+      itemDeleteBttn.innerHTML = "Delete";
+      itemDeleteBttn.className = "recordItemPlayBttn";
+      listItem.appendChild(itemDeleteBttn)
+
+      itemDeleteBttn.addEventListener("click", () => {
+        for (let i = 0; i < recordList.length; i++) {
+          if (name === recordList[i].name) {
+            recordList.splice(i, 1);
+          }
+        }
+        recordingList.removeChild(listItem)
+      })
+      recordingList.appendChild(listItem)
+    }
+  } else {
+    alert('datygdauyfgvk');
+  }
+}

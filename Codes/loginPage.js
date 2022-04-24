@@ -74,3 +74,4 @@ guestLoginText.addEventListener("click", ()=>{
   alert("You are now joining as a guest. Some of the features maynot be applicable!");
   window.location.href = "piano2.html";
 })
+
