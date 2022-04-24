@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, deleteField, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyBCl5MzeJQtSwTPLFImwbbQ_QkcU-M3EG0",
@@ -22,9 +22,6 @@ const metronomeButton = document.getElementById("metronomeButton");
 const metronomeText = document.getElementById("metronomeText");
 const timeSignature = document.getElementById("timeSignature");
 const recordingButton = document.getElementById("recordingButton")
-const recordedNotes = document.getElementById("recordsArray");
-const playbackBttn = document.getElementById("playback");
-const recNotesShown = document.getElementById("recNotesShown");
 const recordingList = document.getElementById("list")
 const showNotes = document.getElementById("noteName");
 const showKeyboardKeys = document.getElementById("keyName");
@@ -32,21 +29,18 @@ const signOutText = document.getElementById("signOutText");
 const signInText = document.getElementById("signInText");
 const greetingText = document.getElementById("greetingText");
 const playingNotes = document.getElementById("playingNotes");
-const justABttn = document.getElementById("justABttn");
 
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
 const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
 const soundObj = {}
+let recordList = [];
+let records = [];
+let recordName;
 
 const padNumber = (num) => {
   if (num < 10) { return "0" + num; }
   else { return num; }
 }
-
-let recordList = [];
-let records = [];
-
-console.log(auth)
 
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
@@ -203,13 +197,25 @@ recordingButton.addEventListener("click", () => {
       isRecording = false;
       recordText.innerHTML = "Start Recording"
       recordingButton.className = "button"
+      recordName = prompt(`Enter your piece name here:`)
+      if (recordName === null) {
+        alert("You've cancelled saving the record!");
+        return;
+      }
+      while (recordName.length === 0) {
+        recordName = prompt(`Name is required. Please enter the name!`)
+        if (recordName === null) {
+          alert("You've cancelled saving the record!");
+          return;
+        }
+      }
 
       if (records.length === 0) {
         alert("Empty Recording!")
       }
       else {
         const notes = JSON.parse(JSON.stringify(records));
-        const name = `Record ${recordList.length + 1}`;
+        const name = recordName;
         const dateNow = Date.now();
         const record = {
           createdAt: dateNow,
@@ -274,21 +280,20 @@ auth.onAuthStateChanged(function (user) {
   if (user) {
     greetingText.innerHTML = `Signed in as ${user.email} • `;
     signInText.style.display = "none";
-    console.log(`userlogged in with user info ${user}`);
     firebaseUser = doc(firestore, `users/${user.uid}`);
     fetchRecords();
   } else {
     greetingText.innerHTML = "Joined as guest • ";
     signInText.style.display = "block";
     signOutText.style.display = "none";
+    recordList=[];
+    var child = recordingList.lastElementChild;
+    while (child) {
+      recordingList.removeChild(child);
+      child = recordingList.lastElementChild;
+    }
   }
 });
-
-
-
-justABttn.addEventListener("click", () => {
-})
-
 
 const fetchRecords = async () => {
   const mySnapshot = await getDoc(firebaseUser)
@@ -300,11 +305,11 @@ const fetchRecords = async () => {
     }
     recordList = [];
     const docData = mySnapshot.data();
-    for (let key in docData) {
+    for (let key in docData) { ///????
       const record = docData[key]
       const dateTime = new Date(record.createdAt)
+
       recordList.push(record);
-      // console.log(record);
       const listItem = document.createElement("li")
       listItem.className = "recordItem";
 
@@ -342,16 +347,16 @@ const fetchRecords = async () => {
       listItem.appendChild(itemDeleteBttn)
 
       itemDeleteBttn.addEventListener("click", () => {
-        for (let i = 0; i < recordList.length; i++) {
-          if (name === recordList[i].name) {
-            recordList.splice(i, 1);
-          }
-        }
-        recordingList.removeChild(listItem)
+        const deleteFirebaseField = {}
+        deleteFirebaseField[`${record.createdAt}`] = deleteField();
+        updateDoc(firebaseUser, deleteFirebaseField).then(()=>{
+          console.log(`success`);
+          fetchRecords();
+        })
       })
       recordingList.appendChild(listItem)
     }
   } else {
-    alert('datygdauyfgvk');
+    alert('Could not fecth records!');
   }
 }
