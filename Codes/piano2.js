@@ -51,6 +51,67 @@ const hideLoading = () => {
   loadingContainer.style.display = `none`;
 }
 
+const recordingFunction = ()=>{
+  if (auth.currentUser === null) {
+    alert("You need to be logged in to access this feature!")
+  } else if (recordList.length > 6) {
+    alert("Does not support more recordings! Please delete one or more exisiting records.");
+  }
+  else {
+    if (!isRecording) {
+      records = [];
+      startTimeRecord = Date.now();
+      isRecording = true;
+      recordText.innerHTML = "Stop Recording";
+      recordingButton.className = "button buttonStop"
+    }
+    else {
+      stopTimeRecord = Date.now();
+      console.log(stopTimeRecord - startTimeRecord)
+      isRecording = false;
+      recordText.innerHTML = "Start Recording"
+      recordingButton.className = "button"
+
+      if (records.length === 0) {
+        alert("Empty Recording!")
+        return;
+      }
+      recordName = prompt(`Enter your piece name here:`)
+      if (recordName === null) {
+        alert("You've cancelled saving the record!");
+        return;
+      }
+      while (recordName.length === 0) {
+        recordName = prompt(`Name is required. Please enter the name!`)
+        if (recordName === null) {
+          alert("You've cancelled saving the record!");
+          return;
+        }
+      }
+      if (recordName.length > 20) {
+        recordName = recordName.substring(0, 20);
+      }
+      const notes = JSON.parse(JSON.stringify(records));
+      const name = recordName;
+      const dateNow = Date.now();
+      const record = {
+        createdAt: dateNow,
+        name: name,
+        notes: notes,
+      }
+      showLoading();
+      const firebaseRecord = {}
+      firebaseRecord[`${dateNow}`] = record;
+      setDoc(firebaseUser, firebaseRecord, { merge: true }).then(() => {
+        fetchRecords();
+      }).catch((error) => {
+        alert(error);
+        hideLoading();
+      })
+    }
+  }
+}
+
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
   const sound = new Audio(`../sounds/24-piano-keys/key${padNumber(i + 1)}.mp3`)
@@ -66,7 +127,12 @@ for (let i = 0; i < 24; i++) {
         note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      records.push(recObj);
+      if (records.length > 99) {
+        alert(`Unable to record more notes due to firebase restrictions`);
+        recordingFunction();
+      } else {
+        records.push(recObj);
+      }
     }
     playingNotes.innerHTML = noteNameArray[i];
   })
@@ -80,7 +146,12 @@ for (let i = 0; i < 24; i++) {
         note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      records.push(recObj);
+      if (records.length > 99) {
+        alert(`Unable to record more notes due to firebase restrictions`);
+        recordingFunction();
+      } else {
+        records.push(recObj);
+      }
     }
     playingNotes.innerHTML = ` `;
   })
@@ -98,7 +169,12 @@ for (let i = 0; i < 24; i++) {
             note: noteNameArray[i],
             time: Date.now() - startTimeRecord
           }
-          records.push(recObj);
+          if (records.length > 99) {
+            alert(`Unable to record more notes due to firebase restrictions`);
+            recordingFunction();
+          } else {
+            records.push(recObj);
+          }
         }
         playingNotes.innerHTML = noteNameArray[i];
       }
@@ -116,7 +192,12 @@ for (let i = 0; i < 24; i++) {
           note: noteNameArray[i],
           time: Date.now() - startTimeRecord
         }
-        records.push(recObj);
+        if (records.length > 99) {
+          alert(`Unable to record more notes due to firebase restrictions`);
+          recordingFunction();
+        } else {
+          records.push(recObj);
+        }
       }
       playingNotes.innerHTML = ` `;
     }
@@ -186,63 +267,7 @@ let startTimeRecord, stopTimeRecord;
 let isRecording = false;
 
 //recording
-recordingButton.addEventListener("click", () => {
-  if (auth.currentUser === null) {
-    alert("You need to be logged in to access this feature!")
-  } else if (recordList.length > 6) {
-    alert("Does not support more recordings! Please delete one or more exisiting records.");
-  }
-  else {
-    if (!isRecording) {
-      records = [];
-      startTimeRecord = Date.now();
-      isRecording = true;
-      recordText.innerHTML = "Stop Recording";
-      recordingButton.className = "button buttonStop"
-    }
-    else {
-      stopTimeRecord = Date.now();
-      console.log(stopTimeRecord - startTimeRecord)
-      isRecording = false;
-      recordText.innerHTML = "Start Recording"
-      recordingButton.className = "button"
-
-      if (records.length === 0) {
-        alert("Empty Recording!")
-        return;
-      }
-      recordName = prompt(`Enter your piece name here:`)
-      if (recordName === null) {
-        alert("You've cancelled saving the record!");
-        return;
-      }
-      while (recordName.length === 0) {
-        recordName = prompt(`Name is required. Please enter the name!`)
-        if (recordName === null) {
-          alert("You've cancelled saving the record!");
-          return;
-        }
-      }
-      const notes = JSON.parse(JSON.stringify(records));
-      const name = recordName;
-      const dateNow = Date.now();
-      const record = {
-        createdAt: dateNow,
-        name: name,
-        notes: notes,
-      }
-      showLoading();
-      const firebaseRecord = {}
-      firebaseRecord[`${dateNow}`] = record;
-      setDoc(firebaseUser, firebaseRecord, { merge: true }).then(() => {
-        fetchRecords();
-      }).catch((error) => {
-        alert(error);
-        hideLoading();
-      })
-    }
-  }
-})
+recordingButton.addEventListener("click", recordingFunction);
 
 let notesShown = false;
 showNotes.addEventListener("click", () => {
