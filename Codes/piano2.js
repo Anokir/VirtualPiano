@@ -29,6 +29,7 @@ const signOutText = document.getElementById("signOutText");
 const signInText = document.getElementById("signInText");
 const greetingText = document.getElementById("greetingText");
 const playingNotes = document.getElementById("playingNotes");
+const loadingContainer = document.getElementById("loadingContainer");
 
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
 const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
@@ -40,6 +41,14 @@ let recordName;
 const padNumber = (num) => {
   if (num < 10) { return "0" + num; }
   else { return num; }
+}
+
+const showLoading = () => {
+  loadingContainer.style.display = `flex`;
+}
+
+const hideLoading = () => {
+  loadingContainer.style.display = `none`;
 }
 
 for (let i = 0; i < 24; i++) {
@@ -197,6 +206,11 @@ recordingButton.addEventListener("click", () => {
       isRecording = false;
       recordText.innerHTML = "Start Recording"
       recordingButton.className = "button"
+
+      if (records.length === 0) {
+        alert("Empty Recording!")
+        return;
+      }
       recordName = prompt(`Enter your piece name here:`)
       if (recordName === null) {
         alert("You've cancelled saving the record!");
@@ -209,25 +223,23 @@ recordingButton.addEventListener("click", () => {
           return;
         }
       }
-
-      if (records.length === 0) {
-        alert("Empty Recording!")
+      const notes = JSON.parse(JSON.stringify(records));
+      const name = recordName;
+      const dateNow = Date.now();
+      const record = {
+        createdAt: dateNow,
+        name: name,
+        notes: notes,
       }
-      else {
-        const notes = JSON.parse(JSON.stringify(records));
-        const name = recordName;
-        const dateNow = Date.now();
-        const record = {
-          createdAt: dateNow,
-          name: name,
-          notes: notes,
-        }
-        const firebaseRecord = {}
-        firebaseRecord[`${dateNow}`] = record;
-        setDoc(firebaseUser, firebaseRecord, { merge: true }).then(() => {
-          fetchRecords();
-        })
-      }
+      showLoading();
+      const firebaseRecord = {}
+      firebaseRecord[`${dateNow}`] = record;
+      setDoc(firebaseUser, firebaseRecord, { merge: true }).then(() => {
+        fetchRecords();
+      }).catch((error) => {
+        alert(error);
+        hideLoading();
+      })
     }
   }
 })
@@ -286,16 +298,18 @@ auth.onAuthStateChanged(function (user) {
     greetingText.innerHTML = "Joined as guest • ";
     signInText.style.display = "block";
     signOutText.style.display = "none";
-    recordList=[];
+    recordList = [];
     var child = recordingList.lastElementChild;
     while (child) {
       recordingList.removeChild(child);
       child = recordingList.lastElementChild;
     }
+    hideLoading();
   }
 });
 
 const fetchRecords = async () => {
+  showLoading();
   const mySnapshot = await getDoc(firebaseUser)
   if (mySnapshot.exists()) {
     var child = recordingList.lastElementChild;
@@ -347,16 +361,25 @@ const fetchRecords = async () => {
       listItem.appendChild(itemDeleteBttn)
 
       itemDeleteBttn.addEventListener("click", () => {
-        const deleteFirebaseField = {}
-        deleteFirebaseField[`${record.createdAt}`] = deleteField();
-        updateDoc(firebaseUser, deleteFirebaseField).then(()=>{
-          console.log(`success`);
-          fetchRecords();
-        })
+        const isDeleted = confirm(`Are you sure to delete ${record.name}?`)
+        if (isDeleted) {
+          showLoading();
+          const deleteFirebaseField = {}
+          deleteFirebaseField[`${record.createdAt}`] = deleteField();
+          updateDoc(firebaseUser, deleteFirebaseField).then(() => {
+            console.log(`success`);
+            fetchRecords();
+          }).catch((error) => {
+            alert(error);
+            hideLoading();
+          })
+        }
       })
       recordingList.appendChild(listItem)
     }
   } else {
     alert('Could not fecth records!');
   }
+  hideLoading();
 }
+
