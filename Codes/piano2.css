@@ -69,7 +69,6 @@ img {
   background-color: rgba(255, 255, 255, 0.25);
   border-radius: 20px 4px 4px 4px;
   padding: 10px;
-  
 }
 
 .inputFlexContainer {
@@ -104,7 +103,6 @@ img {
 .button {
   position: relative;
   display: flex;
-  margin-right: 10px;
   height: 50px;
   width: 180px;
   background-color: #29648a;
@@ -150,6 +148,10 @@ img {
 
 .buttonStop :hover {
   background-color: #a3424b;
+}
+
+#metronomeButton{
+  margin: auto;
 }
 
 .button2{
@@ -284,13 +286,13 @@ img {
 }
 
 #loadingContainer img {
-  height: 200px;
-  width: 200px;
+  height: 160px;
+  width: 160px;
 }
 
 .timer{
   position: relative;
-  margin-left: 10px;
+  margin-left: 20px;
   height: 50px;
   border-radius: 5px;
   font-size: 40px;
