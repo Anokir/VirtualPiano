@@ -427,7 +427,7 @@ const fetchRecords = async () => {
       recordingList.appendChild(listItem)
     } 
   } else {
-    alert('Could not fecth records!');
+    console.log('No records found.');
   }
   hideLoading();
 }
