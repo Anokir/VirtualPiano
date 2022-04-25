@@ -354,6 +354,13 @@ const fetchRecords = async () => {
     const docData = mySnapshot.data();
     for (let key in docData) {
       const record = docData[key]
+      recordList.push(record);
+    }
+    recordList = recordList.sort((a,b)=>{
+      return a.createdAt - b.createdAt;
+    })
+    for(let i =0; i<recordList.length; i++){
+      const record = recordList[i]
       const dateTime = new Date(record.createdAt)
 
       const itemDividerFunction = () => {
@@ -362,7 +369,6 @@ const fetchRecords = async () => {
         listItem.appendChild(itemDivider);
       }
 
-      recordList.push(record);
       const listItem = document.createElement("li")
       listItem.className = "recordItem";
 
@@ -419,7 +425,7 @@ const fetchRecords = async () => {
         }
       })
       recordingList.appendChild(listItem)
-    }
+    } 
   } else {
     alert('Could not fecth records!');
   }
