@@ -42,12 +42,14 @@
           </div>
 
           <div class="box1">
-            <div type="button" id="keyName" class="button2">
-              Show Hide Controls
-            </div>
 
             <div type="button" id="noteName" class="button2">
               Show Hide Notes
+            </div>
+            
+
+            <div type="button" id="keyName" class="button2">
+              Show Hide Controls
             </div>
 
             <div id="playingNotes" class="playingNotes"></div>
@@ -60,11 +62,14 @@
             <ul id="list">
             </ul>
           </div>
-          <div type="button" class="button" id="recordingButton">
-            <span id="recordText" class="buttonText">Start Recording</span>
-            <span class="icon">
-              <img src="../images/Record.png">
-            </span>
+          <div class="flexDiv">
+            <div type="button" class="button" id="recordingButton">
+              <span id="recordText" class="buttonText">Start Recording</span>
+              <span class="icon">
+                <img src="../images/Record.png">
+              </span>
+            </div>
+            <div class="timer" id="timerBttn">00:00</div>
           </div>
         </div>
       </div>
@@ -101,7 +106,7 @@
     </div>
 
     <div id="loadingContainer">
-      <img src = "../images/loading.gif">
+      <img src="../images/loading.gif">
     </div>
   </div>
 

@@ -30,13 +30,17 @@ const signInText = document.getElementById("signInText");
 const greetingText = document.getElementById("greetingText");
 const playingNotes = document.getElementById("playingNotes");
 const loadingContainer = document.getElementById("loadingContainer");
+const timerBttn = document.getElementById("timerBttn");
 
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
 const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
 const soundObj = {}
+let recObj = {};
 let recordList = [];
 let records = [];
 let recordName;
+
+timerBttn.style.display = "none";
 
 const padNumber = (num) => {
   if (num < 10) { return "0" + num; }
@@ -51,7 +55,11 @@ const hideLoading = () => {
   loadingContainer.style.display = `none`;
 }
 
-const recordingFunction = ()=>{
+let startTimeRecord, stopTimeRecord;
+let isRecording = false;
+let timerInterval;
+
+const recordingFunction = () => {
   if (auth.currentUser === null) {
     alert("You need to be logged in to access this feature!")
   } else if (recordList.length > 6) {
@@ -63,28 +71,42 @@ const recordingFunction = ()=>{
       startTimeRecord = Date.now();
       isRecording = true;
       recordText.innerHTML = "Stop Recording";
-      recordingButton.className = "button buttonStop"
+      recordingButton.className = "button buttonStop";
+
+      timerBttn.style.display = "block";
+      timerBttn.innerHTML = `00:00`;
+      let timerValue = 0;
+      timerInterval = setInterval(() => {
+        ++timerValue;
+        let seconds = padNumber(timerValue % 60);
+        let minutes = padNumber(parseInt(timerValue / 60));
+        timerBttn.innerHTML = `${minutes}:${seconds}`;
+      }, 1000);
     }
     else {
       stopTimeRecord = Date.now();
-      console.log(stopTimeRecord - startTimeRecord)
+      console.log(stopTimeRecord - startTimeRecord);
       isRecording = false;
-      recordText.innerHTML = "Start Recording"
-      recordingButton.className = "button"
+      recordText.innerHTML = "Start Recording";
+      recordingButton.className = "button";
+      clearInterval(timerInterval);
 
       if (records.length === 0) {
         alert("Empty Recording!")
+        timerBttn.innerHTML = `00:00`;
         return;
       }
       recordName = prompt(`Enter your piece name here:`)
       if (recordName === null) {
         alert("You've cancelled saving the record!");
+        timerBttn.innerHTML = `00:00`;
         return;
       }
       while (recordName.length === 0) {
         recordName = prompt(`Name is required. Please enter the name!`)
         if (recordName === null) {
           alert("You've cancelled saving the record!");
+          timerBttn.innerHTML = `00:00`;
           return;
         }
       }
@@ -112,6 +134,14 @@ const recordingFunction = ()=>{
   }
 }
 
+const deleteAllInnerHtmlText = () => {
+  var child = recordingList.lastElementChild;
+  while (child) {
+    recordingList.removeChild(child);
+    child = recordingList.lastElementChild;
+  }
+}
+
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
   const sound = new Audio(`../sounds/24-piano-keys/key${padNumber(i + 1)}.mp3`)
@@ -121,13 +151,13 @@ for (let i = 0; i < 24; i++) {
   button.addEventListener("mousedown", () => {
     sound.play()
     if (isRecording) {
-      const recObj = {
+      recObj = {
         isDown: true,
         key: `key${i + 1}`,
         note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      if (records.length > 99) {
+      if (records.length > 199) {
         alert(`Unable to record more notes due to firebase restrictions`);
         recordingFunction();
       } else {
@@ -146,7 +176,7 @@ for (let i = 0; i < 24; i++) {
         note: noteNameArray[i],
         time: Date.now() - startTimeRecord
       }
-      if (records.length > 99) {
+      if (records.length > 199) {
         alert(`Unable to record more notes due to firebase restrictions`);
         recordingFunction();
       } else {
@@ -169,7 +199,7 @@ for (let i = 0; i < 24; i++) {
             note: noteNameArray[i],
             time: Date.now() - startTimeRecord
           }
-          if (records.length > 99) {
+          if (records.length > 199) {
             alert(`Unable to record more notes due to firebase restrictions`);
             recordingFunction();
           } else {
@@ -192,7 +222,7 @@ for (let i = 0; i < 24; i++) {
           note: noteNameArray[i],
           time: Date.now() - startTimeRecord
         }
-        if (records.length > 99) {
+        if (records.length > 199) {
           alert(`Unable to record more notes due to firebase restrictions`);
           recordingFunction();
         } else {
@@ -243,6 +273,7 @@ metronomeButton.addEventListener("click", (event) => {
         if (j % 4 === 0) {
           baseAudio.currentTime = 0;
           baseAudio.play();
+          console.log(records)
         }
         else {
           metronomeAudio.currentTime = 0;
@@ -263,19 +294,59 @@ metronomeButton.addEventListener("click", (event) => {
   }
 })
 
-let startTimeRecord, stopTimeRecord;
-let isRecording = false;
 
 //recording
 recordingButton.addEventListener("click", recordingFunction);
 
+// let notesShown = false;
+// showNotes.addEventListener("click", () => {
+//   if (!notesShown) {
+//     for (let j = 0; j < noteNameArray.length; j++) {
+//       document.getElementById(`key${j + 1}`).innerHTML += noteNameArray[j];
+//     }
+//     notesShown = true;
+//   } else {
+//     for (let j = 0; j < noteNameArray.length; j++) {
+//       document.getElementById(`key${j + 1}`).innerHTML = "";
+//       notesShown = false;
+//     }
+//   }
+// })
+
+// let controlsShown = false;
+// showKeyboardKeys.addEventListener("click", () => {
+//   if (!controlsShown) {
+//     for (let j = 0; j < arrayforKeys.length; j++) {
+//       document.getElementById(`key${j + 1}`).innerHTML += arrayforKeys[j];
+//     }
+//     controlsShown = true;
+//   } else {
+//     for (let j = 0; j < arrayforKeys.length; j++) {
+//       document.getElementById(`key${j + 1}`).innerHTML = "";
+//       controlsShown = false;
+//     }
+//   }
+// })
+
 let notesShown = false;
+let controlsShown = false;
+
 showNotes.addEventListener("click", () => {
-  if (!notesShown) {
+  if (!notesShown && !controlsShown) {
     for (let j = 0; j < noteNameArray.length; j++) {
       document.getElementById(`key${j + 1}`).innerHTML = noteNameArray[j];
     }
     notesShown = true;
+  } else if (!notesShown && controlsShown) {
+    for (let j = 0; j < noteNameArray.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = noteNameArray[j] + "<br />" + arrayforKeys[j];
+      notesShown = true;
+    }
+  } else if (notesShown && controlsShown) {
+    for (let j = 0; j < noteNameArray.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = arrayforKeys[j];
+      notesShown = false;
+    }
   } else {
     for (let j = 0; j < noteNameArray.length; j++) {
       document.getElementById(`key${j + 1}`).innerHTML = "";
@@ -284,13 +355,22 @@ showNotes.addEventListener("click", () => {
   }
 })
 
-let controlsShown = false;
 showKeyboardKeys.addEventListener("click", () => {
-  if (!controlsShown) {
+  if (!notesShown && !controlsShown) {
     for (let j = 0; j < arrayforKeys.length; j++) {
       document.getElementById(`key${j + 1}`).innerHTML = arrayforKeys[j];
     }
     controlsShown = true;
+  } else if (notesShown && !controlsShown) {
+    for (let j = 0; j < arrayforKeys.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = noteNameArray[j] + "<br />" + arrayforKeys[j];
+      controlsShown = true;
+    }
+  } else if (notesShown && controlsShown) {
+    for (let j = 0; j < arrayforKeys.length; j++) {
+      document.getElementById(`key${j + 1}`).innerHTML = noteNameArray[j];
+      controlsShown = false;
+    }
   } else {
     for (let j = 0; j < arrayforKeys.length; j++) {
       document.getElementById(`key${j + 1}`).innerHTML = "";
@@ -324,11 +404,7 @@ auth.onAuthStateChanged(function (user) {
     signInText.style.display = "block";
     signOutText.style.display = "none";
     recordList = [];
-    var child = recordingList.lastElementChild;
-    while (child) {
-      recordingList.removeChild(child);
-      child = recordingList.lastElementChild;
-    }
+    deleteAllInnerHtmlText();
     hideLoading();
   }
 });
@@ -337,27 +413,35 @@ const fetchRecords = async () => {
   showLoading();
   const mySnapshot = await getDoc(firebaseUser)
   if (mySnapshot.exists()) {
-    var child = recordingList.lastElementChild;
-    while (child) {
-      recordingList.removeChild(child);
-      child = recordingList.lastElementChild;
-    }
+    deleteAllInnerHtmlText();
     recordList = [];
     const docData = mySnapshot.data();
-    for (let key in docData) { ///????
+    for (let key in docData) { 
       const record = docData[key]
       const dateTime = new Date(record.createdAt)
+
+      const itemDividerFunction = () => {
+        const itemDivider = document.createElement("span")
+        itemDivider.innerHTML = "&nbsp&nbsp|";
+        listItem.appendChild(itemDivider);
+      }
 
       recordList.push(record);
       const listItem = document.createElement("li")
       listItem.className = "recordItem";
 
       const itemName = document.createElement("span")
-      itemName.innerHTML = `${record.name},  ${dateTime.toDateString('dd-MM-yyyy')} &nbsp&nbsp|`;
-      listItem.appendChild(itemName)
+      itemName.innerHTML = `${record.name},  ${dateTime.toDateString('dd-MM-yyyy')} `;
+      listItem.appendChild(itemName);
 
+      itemDividerFunction();
+      const formatDateSetter = document.createElement("span")
+      formatDateSetter.innerHTML = ` ${dateTime.toTimeString().split(` `)[0]} `;
+      listItem.appendChild(formatDateSetter);
+
+      itemDividerFunction();
       const itemPlayBttn = document.createElement("span")
-      itemPlayBttn.innerHTML = "Play";
+      itemPlayBttn.innerHTML = " Play ";
       itemPlayBttn.className = "recordItemPlayBttn";
       listItem.appendChild(itemPlayBttn)
 
@@ -376,10 +460,7 @@ const fetchRecords = async () => {
         }
       })
 
-      const itemDivider = document.createElement("span")
-      itemDivider.innerHTML = `&nbsp&nbsp|`;
-      listItem.appendChild(itemDivider)
-
+      itemDividerFunction();
       const itemDeleteBttn = document.createElement("span")
       itemDeleteBttn.innerHTML = "Delete";
       itemDeleteBttn.className = "recordItemPlayBttn";
@@ -407,4 +488,6 @@ const fetchRecords = async () => {
   }
   hideLoading();
 }
+
+
 
