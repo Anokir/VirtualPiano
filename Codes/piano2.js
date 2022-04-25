@@ -35,7 +35,6 @@ const timerBttn = document.getElementById("timerBttn");
 const arrayforKeys = ["w", "3", "e", "4", "r", "5", "t", "y", "7", "u", "8", "i", "z", "s", "x", "d", "c", "f", "v", "b", "h", "n", "j", "m"];
 const noteNameArray = ["F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "D#", "E"]
 const soundObj = {}
-let recObj = {};
 let recordList = [];
 let records = [];
 let recordName;
@@ -55,14 +54,20 @@ const hideLoading = () => {
   loadingContainer.style.display = `none`;
 }
 
-let startTimeRecord, stopTimeRecord;
+const getTimeString = (totalTime) => {
+  let seconds = padNumber(totalTime % 60);
+  let minutes = padNumber(parseInt(totalTime / 60));
+  return `${minutes}:${seconds}`;
+}
+
+let startTimeRecord;
 let isRecording = false;
 let timerInterval;
 
 const recordingFunction = () => {
   if (auth.currentUser === null) {
     alert("You need to be logged in to access this feature!")
-  } else if (recordList.length > 6) {
+  } else if (recordList.length > 7) {
     alert("Does not support more recordings! Please delete one or more exisiting records.");
   }
   else {
@@ -78,14 +83,10 @@ const recordingFunction = () => {
       let timerValue = 0;
       timerInterval = setInterval(() => {
         ++timerValue;
-        let seconds = padNumber(timerValue % 60);
-        let minutes = padNumber(parseInt(timerValue / 60));
-        timerBttn.innerHTML = `${minutes}:${seconds}`;
+        timerBttn.innerHTML = getTimeString(timerValue);
       }, 1000);
     }
     else {
-      stopTimeRecord = Date.now();
-      console.log(stopTimeRecord - startTimeRecord);
       isRecording = false;
       recordText.innerHTML = "Start Recording";
       recordingButton.className = "button";
@@ -142,6 +143,23 @@ const deleteAllInnerHtmlText = () => {
   }
 }
 
+let recNote = (isDown, i) => {
+  if (isRecording) {
+    const recObj = {
+      isDown: isDown,
+      key: `key${i + 1}`,
+      note: noteNameArray[i],
+      time: Date.now() - startTimeRecord
+    }
+    if (records.length > 999) {
+      alert(`Unable to record more notes due to firebase restrictions`);
+      recordingFunction();
+    } else {
+      records.push(recObj);
+    }
+  }
+}
+
 for (let i = 0; i < 24; i++) {
   const button = document.getElementById(`key${i + 1}`)
   const sound = new Audio(`../sounds/24-piano-keys/key${padNumber(i + 1)}.mp3`)
@@ -150,62 +168,23 @@ for (let i = 0; i < 24; i++) {
   //click events 
   button.addEventListener("mousedown", () => {
     sound.play()
-    if (isRecording) {
-      recObj = {
-        isDown: true,
-        key: `key${i + 1}`,
-        note: noteNameArray[i],
-        time: Date.now() - startTimeRecord
-      }
-      if (records.length > 199) {
-        alert(`Unable to record more notes due to firebase restrictions`);
-        recordingFunction();
-      } else {
-        records.push(recObj);
-      }
-    }
+    recNote(true, i);
     playingNotes.innerHTML = noteNameArray[i];
   })
   button.addEventListener("mouseup", () => {
     sound.pause()
     sound.currentTime = 0
-    if (isRecording) {
-      const recObj = {
-        isDown: false,
-        key: `key${i + 1}`,
-        note: noteNameArray[i],
-        time: Date.now() - startTimeRecord
-      }
-      if (records.length > 199) {
-        alert(`Unable to record more notes due to firebase restrictions`);
-        recordingFunction();
-      } else {
-        records.push(recObj);
-      }
-    }
+    recNote(false, i);
     playingNotes.innerHTML = ` `;
   })
 
   //keyPress events 
   document.addEventListener("keydown", (event) => {
-    if (!event.repeat) { // !down:  down === false
+    if (!event.repeat) {
       let name = event.key;
       if (name === arrayforKeys[i]) {
         sound.play();
-        if (isRecording) {
-          const recObj = {
-            isDown: true,
-            key: `key${i + 1}`,
-            note: noteNameArray[i],
-            time: Date.now() - startTimeRecord
-          }
-          if (records.length > 199) {
-            alert(`Unable to record more notes due to firebase restrictions`);
-            recordingFunction();
-          } else {
-            records.push(recObj);
-          }
-        }
+        recNote(true, i);
         playingNotes.innerHTML = noteNameArray[i];
       }
     }
@@ -215,20 +194,7 @@ for (let i = 0; i < 24; i++) {
     if (name === arrayforKeys[i]) {
       sound.pause();
       sound.currentTime = 0;
-      if (isRecording) {
-        const recObj = {
-          isDown: false,
-          key: `key${i + 1}`,
-          note: noteNameArray[i],
-          time: Date.now() - startTimeRecord
-        }
-        if (records.length > 199) {
-          alert(`Unable to record more notes due to firebase restrictions`);
-          recordingFunction();
-        } else {
-          records.push(recObj);
-        }
-      }
+      recNote(false, i);
       playingNotes.innerHTML = ` `;
     }
   })
@@ -297,36 +263,6 @@ metronomeButton.addEventListener("click", (event) => {
 
 //recording
 recordingButton.addEventListener("click", recordingFunction);
-
-// let notesShown = false;
-// showNotes.addEventListener("click", () => {
-//   if (!notesShown) {
-//     for (let j = 0; j < noteNameArray.length; j++) {
-//       document.getElementById(`key${j + 1}`).innerHTML += noteNameArray[j];
-//     }
-//     notesShown = true;
-//   } else {
-//     for (let j = 0; j < noteNameArray.length; j++) {
-//       document.getElementById(`key${j + 1}`).innerHTML = "";
-//       notesShown = false;
-//     }
-//   }
-// })
-
-// let controlsShown = false;
-// showKeyboardKeys.addEventListener("click", () => {
-//   if (!controlsShown) {
-//     for (let j = 0; j < arrayforKeys.length; j++) {
-//       document.getElementById(`key${j + 1}`).innerHTML += arrayforKeys[j];
-//     }
-//     controlsShown = true;
-//   } else {
-//     for (let j = 0; j < arrayforKeys.length; j++) {
-//       document.getElementById(`key${j + 1}`).innerHTML = "";
-//       controlsShown = false;
-//     }
-//   }
-// })
 
 let notesShown = false;
 let controlsShown = false;
@@ -416,7 +352,7 @@ const fetchRecords = async () => {
     deleteAllInnerHtmlText();
     recordList = [];
     const docData = mySnapshot.data();
-    for (let key in docData) { 
+    for (let key in docData) {
       const record = docData[key]
       const dateTime = new Date(record.createdAt)
 
@@ -431,13 +367,15 @@ const fetchRecords = async () => {
       listItem.className = "recordItem";
 
       const itemName = document.createElement("span")
-      itemName.innerHTML = `${record.name},  ${dateTime.toDateString('dd-MM-yyyy')} `;
+      itemName.innerHTML = `${record.name}, &nbsp  ${dateTime.toDateString('dd-MM-yyyy')}, ${dateTime.toTimeString().split(` `)[0]}`;
       listItem.appendChild(itemName);
 
       itemDividerFunction();
-      const formatDateSetter = document.createElement("span")
-      formatDateSetter.innerHTML = ` ${dateTime.toTimeString().split(` `)[0]} `;
-      listItem.appendChild(formatDateSetter);
+      let lastElement = record.notes.length - 1;
+      let totalTimePlyed = parseInt(record.notes[lastElement].time / 1000);
+      const timePlayed = document.createElement("span")
+      timePlayed.innerHTML = ` &nbsp ${getTimeString(totalTimePlyed)} `;
+      listItem.appendChild(timePlayed);
 
       itemDividerFunction();
       const itemPlayBttn = document.createElement("span")
@@ -473,7 +411,6 @@ const fetchRecords = async () => {
           const deleteFirebaseField = {}
           deleteFirebaseField[`${record.createdAt}`] = deleteField();
           updateDoc(firebaseUser, deleteFirebaseField).then(() => {
-            console.log(`success`);
             fetchRecords();
           }).catch((error) => {
             alert(error);
@@ -488,6 +425,3 @@ const fetchRecords = async () => {
   }
   hideLoading();
 }
-
-
-
